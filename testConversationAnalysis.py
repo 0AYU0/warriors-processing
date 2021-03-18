@@ -119,7 +119,7 @@ for name in listAllWarriorsPlayers:
     warriorsPlayersFullNames.append([name, nameSeparate[0], nameSeparate[1]])
 
 #Load file data into an variable
-with open('./conversations.json') as f:
+with open('./../conversations.json') as f:
     sample_conversation_data = json.load(f)
 
 def parseAndCombine():
@@ -170,49 +170,56 @@ warriorsConversationBigrams = {}
 warriorsUtterancesUnigrams = {}
 warriorsUtterancesBigrams = {}
 
-# Return a list of tokens for each word in the file
-tokenized = parseAndCombine()
+# # Return a list of tokens for each word in the file
+# tokenized = parseAndCombine()
 
-# Return each unigram, bigram, and trigram with its corresponding count
-collectionConversationUnigrams = ngramAnalysis(tokenized, 1)
-collectionConversationBigrams = ngramAnalysis(tokenized, 2)
-# collectionConversationTrigams = ngramAnalysis(tokenized, 3)
+# # Return each unigram, bigram, and trigram with its corresponding count
+# collectionConversationUnigrams = ngramAnalysis(tokenized, 1)
+# collectionConversationBigrams = ngramAnalysis(tokenized, 2)
+# # collectionConversationTrigams = ngramAnalysis(tokenized, 3)
 
-#Print the most common unigrams, bigrams, trigrams
-# commonUnigrams = collectionConversationUnigrams.most_common(250)
-# commonBigrams = collectionConversationBigrams.most_common(250)
-# commonTrigrams = collectionConversationTrigams.most_common(250)
+# #Print the most common unigrams, bigrams, trigrams
+# # commonUnigrams = collectionConversationUnigrams.most_common(250)
+# # commonBigrams = collectionConversationBigrams.most_common(250)
+# # commonTrigrams = collectionConversationTrigams.most_common(250)
 
-# for key, value in commonTrigrams:
-#     print(key[0] + " " + key[1] + " " + key[2] + " " + str(value))
+# # for key, value in commonTrigrams:
+# #     print(key[0] + " " + key[1] + " " + key[2] + " " + str(value))
 
-# Filter according to the Warriors Players
-commonNamesUnigram = unigramCounter(collectionConversationUnigrams, warriorsConversationUnigrams) 
-commonNamesBigram = bigramCounter(collectionConversationBigrams, warriorsConversationBigrams)
+# # Filter according to the Warriors Players
+# commonNamesUnigram = unigramCounter(collectionConversationUnigrams, warriorsConversationUnigrams) 
+# commonNamesBigram = bigramCounter(collectionConversationBigrams, warriorsConversationBigrams)
 
-for key in commonNamesUnigram:
-    print(key + " " + str(commonNamesUnigram[key]))
+# for key in commonNamesUnigram:
+#     print(key + " " + str(commonNamesUnigram[key]))
 
-for key in commonNamesBigram:
-    print(key + " " + str(commonNamesBigram[key]))
+# for key in commonNamesBigram:
+#     print(key + " " + str(commonNamesBigram[key]))
 
+
+with jsonlines.open('./../utterances.jsonl') as reader:
+    for utterance in reader:
+        combinedConversations = utterance['text']
+        combinedConversations = combinedConversations.lower()
+        combinedConversations = re.sub(r'[^a-zA-Z\s]', ' ', combinedConversations)
+        combinedConversations = nltk.word_tokenize(combinedConversations)
+        collectionUtteranceUnigrams = ngramAnalysis(combinedConversations, 1)
+        collectionUtteranceBigrams = ngramAnalysis(combinedConversations, 2)
+        unigramCounter(collectionUtteranceUnigrams, warriorsUtterancesUnigrams)
+        bigramCounter(collectionUtteranceBigrams, warriorsUtterancesBigrams)
+
+
+for key in warriorsUtterancesUnigrams:
+    print(key + " " + str(warriorsUtterancesUnigrams[key]))
+
+print()
+
+for key in warriorsUtterancesBigrams:
+    print(key + " " + str(warriorsUtterancesBigrams[key]))
 
 # #Finds the 20 most frequent skip grams with i words in i + 3 range
 # for i in range(2, 6):
 #     print(skipGramAnalysis(tokenized, i, i + 3).most_common(20))
-
-
-# with jsonlines.open('utterances.jsonl') as reader:
-#     readLine = 1
-#     for utterance in reader:
-#         print('read' + str(readLine))
-#         readLine += 1
-#         combinedConversations = utterance['text']
-#         combinedConversations = combinedConversations.lower()
-#         combinedConversations = re.sub(r'[^a-zA-Z\s\']', ' ', combinedConversations)
-#         combinedConversations = nltk.word_tokenize(combinedConversations)
-#         collectionUtteranceUnigrams = unigramAnalysis(combinedConversations)
-#         unigramCounter(collectionUtteranceUnigrams, warriorsUtterancesMentions)
 
 # tokenized = parseAndCombine()
 # # collectionConversationUnigrams = unigramAnalysis(tokenized)
